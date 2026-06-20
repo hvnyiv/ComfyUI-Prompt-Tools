@@ -4,10 +4,17 @@ A small ComfyUI custom node that reads `.txt` files from a folder and outputs on
 
 ## Install
 
-Copy or symlink this folder into ComfyUI's `custom_nodes` directory:
+Clone this repository directly into ComfyUI's `custom_nodes` directory:
+
+```powershell
+cd ComfyUI\custom_nodes
+git clone https://github.com/hvnyiv/comfyui-custom-nude.git
+```
+
+Or copy this repository folder into:
 
 ```text
-ComfyUI/custom_nodes/ComfyUI-RandomTextPicker
+ComfyUI/custom_nodes/comfyui-custom-nude
 ```
 
 Then restart ComfyUI.
