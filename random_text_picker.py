@@ -194,8 +194,8 @@ class RandomTextPicker:
         raise ValueError(f"Unknown mode: {mode}")
 
 
-class AnimePromptFormatter:
-    """Normalize a prompt for anime-style tag prompts."""
+class AnimaPromptFormatter:
+    """Normalize a prompt for anima-style tag prompts."""
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -211,7 +211,7 @@ class AnimePromptFormatter:
     RETURN_TYPES = ("STRING",)
     RETURN_NAMES = ("prompt",)
     FUNCTION = "format_prompt"
-    CATEGORY = "text/anime"
+    CATEGORY = "text/anima"
 
     def format_prompt(self, prompt, separator, escape_parentheses, underscore_mode):
         normalized_prompt = normalize_anime_prompt(prompt, separator, escape_parentheses, underscore_mode)
@@ -220,10 +220,10 @@ class AnimePromptFormatter:
 
 NODE_CLASS_MAPPINGS = {
     "RandomTextPicker": RandomTextPicker,
-    "AnimePromptFormatter": AnimePromptFormatter,
+    "AnimaPromptFormatter": AnimaPromptFormatter,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
     "RandomTextPicker": "Random Text Picker",
-    "AnimePromptFormatter": "Anime Prompt Formatter",
+    "AnimaPromptFormatter": "Anima Prompt Formatter",
 }
