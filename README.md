@@ -1,45 +1,55 @@
-# ComfyUI Random Text Picker
+# ComfyUI Prompt Tools
 
-A small ComfyUI custom node that reads `.txt` files from a folder and outputs one file's text.
+A small ComfyUI node pack for prompt text, CL Tagger output, and LoRA trigger words.
+
+## Nodes
+
+| Node | Category | Purpose |
+| --- | --- | --- |
+| Random Text Picker | `text/random` | Selects text from files by random seed, sequence, or index. |
+| Anima Prompt Formatter | `text/anima` | Normalizes Anima tags, underscores, separators, and parentheses. |
+| CL Tagger Action Filter | `text/tagger` | Extracts action tags and exact CL Tagger v2.00 character tags. |
+| LoRA Trigger Loader | `loaders/lora` | Loads a LoRA and outputs its saved trigger-word preset. |
 
 ## Install
 
-Clone this repository directly into ComfyUI's `custom_nodes` directory:
-
 ```powershell
 cd ComfyUI\custom_nodes
-git clone https://github.com/hvnyiv/comfyui-custom-nude.git
+git clone https://github.com/hvnyiv/ComfyUI-Prompt-Tools.git
 ```
 
-Or copy this repository folder into:
+Restart ComfyUI after installation.
 
-```text
-ComfyUI/custom_nodes/comfyui-custom-nude
+## LoRA Trigger Presets
+
+Select a LoRA, enter its trigger words, then click **Save Trigger Preset**.
+Selecting that LoRA later restores the words automatically. Saving an empty
+preset deletes it.
+
+Personal presets are stored in `lora_trigger_presets.json` and are ignored by
+Git.
+
+## CL Tagger Filter
+
+Connect Mira `CL Tagger v2` text output to `CL Tagger Action Filter`.
+`balanced` is the recommended preset; `strict` keeps fewer tags and
+`all_candidates` is intended for testing.
+
+The bundled action classification is experimental. Character matching is exact
+against the 49,516 Character entries in CL Tagger v2.00.
+
+## Update
+
+```powershell
+cd ComfyUI\custom_nodes\ComfyUI-Prompt-Tools
+git pull
 ```
 
-Then restart ComfyUI.
+Restart ComfyUI, then use `Ctrl+F5` if the browser still shows an old node UI.
 
-## Node
+## Files
 
-`Random Text Picker` is under:
-
-```text
-text/random
-```
-
-## Inputs
-
-- `folder_path`: Folder containing txt files.
-- `mode`: `random`, `sequential`, or `index`.
-- `seed`: Used by `random` mode for repeatable selection.
-- `index`: Used by `sequential` and `index` modes.
-- `recursive`: Search subfolders too.
-- `file_pattern`: Defaults to `*.txt`; can be changed to patterns like `*.prompt.txt`.
-- `encoding`: Text file encoding.
-- `strip_whitespace`: Trim leading and trailing whitespace.
-
-## Outputs
-
-- `text`: Selected txt content.
-- `file_path`: Selected txt file path.
-- `selected_index`: Index of the selected file in sorted file order.
+- `random_text_picker.py` — node implementations and preset API
+- `action_tag_semantic_cache.json.gz` — compressed CL Tagger lookup data
+- `web/lora_trigger_presets.js` — LoRA preset interface
+- `__init__.py` — node and web-extension registration
