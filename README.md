@@ -1,78 +1,55 @@
-# ComfyUI Custom Nude
+# ComfyUI Prompt Tools
 
-A compact ComfyUI custom-node pack for text selection, anime prompt formatting,
-CL Tagger v2 filtering, and LoRA trigger-word presets.
+A small ComfyUI node pack for prompt text, CL Tagger output, and LoRA trigger words.
 
 ## Nodes
 
-### Random Text Picker
+| Node | Category | Purpose |
+| --- | --- | --- |
+| Random Text Picker | `text/random` | Selects text from files by random seed, sequence, or index. |
+| Anime Prompt Formatter | `text/anime` | Normalizes anime tags, underscores, separators, and parentheses. |
+| CL Tagger Action Filter | `text/tagger` | Extracts action tags and exact CL Tagger v2.00 character tags. |
+| LoRA Trigger Loader | `loaders/lora` | Loads a LoRA and outputs its saved trigger-word preset. |
 
-Category: `text/random`
-
-Reads matching text files from a folder and returns one file's contents, path,
-and sorted index. Supports random, sequential, and direct-index selection,
-recursive search, custom file patterns, and common text encodings.
-
-### Anime Prompt Formatter
-
-Category: `text/anime`
-
-Normalizes anime tag prompts, merges common multi-word tags, handles underscores,
-escapes parentheses when requested, and joins tags with a configurable separator.
-
-### CL Tagger Action Filter
-
-Category: `text/tagger`
-
-Connect the `tags` output from Mira `CL Tagger v2` to this node. It outputs:
-
-- filtered action/pose tags
-- removed tags
-- kept and removed counts
-- exact CL Tagger v2.00 character tags and their count
-
-`balanced` is the recommended default. `strict` keeps fewer high-confidence
-action tags, while `all_candidates` is intended for testing. The bundled
-semantic action cache is experimental and can contain false positives or false
-negatives. Character matching is exact against the v2.00 Character vocabulary.
-
-### LoRA Trigger Loader
-
-Category: `loaders/lora`
-
-Loads one LoRA and outputs `model`, `clip`, and its preset `trigger_words`.
-Select a LoRA, enter its trigger words, and press **Save Trigger Preset**. When
-that LoRA is selected again, the saved words are restored automatically.
-
-Presets are stored locally in `lora_trigger_presets.json`. This file is ignored
-by Git so personal trigger presets are not published. Enter an empty preset and
-save it to delete that LoRA's stored preset.
-
-## Installation
-
-Clone the repository directly into ComfyUI's `custom_nodes` folder:
+## Install
 
 ```powershell
 cd ComfyUI\custom_nodes
-git clone https://github.com/hvnyiv/comfyui-custom-nude.git
+git clone https://github.com/hvnyiv/ComfyUI-Prompt-Tools.git
 ```
 
-Restart ComfyUI after installation or updating. No additional Python packages
-are required beyond ComfyUI's own runtime.
+Restart ComfyUI after installation.
+
+## LoRA Trigger Presets
+
+Select a LoRA, enter its trigger words, then click **Save Trigger Preset**.
+Selecting that LoRA later restores the words automatically. Saving an empty
+preset deletes it.
+
+Personal presets are stored in `lora_trigger_presets.json` and are ignored by
+Git.
+
+## CL Tagger Filter
+
+Connect Mira `CL Tagger v2` text output to `CL Tagger Action Filter`.
+`balanced` is the recommended preset; `strict` keeps fewer tags and
+`all_candidates` is intended for testing.
+
+The bundled action classification is experimental. Character matching is exact
+against the 49,516 Character entries in CL Tagger v2.00.
 
 ## Update
 
 ```powershell
-cd ComfyUI\custom_nodes\comfyui-custom-nude
+cd ComfyUI\custom_nodes\ComfyUI-Prompt-Tools
 git pull
 ```
 
-Then restart ComfyUI and refresh the browser with `Ctrl+F5` if an old node UI
-is still cached.
+Restart ComfyUI, then use `Ctrl+F5` if the browser still shows an old node UI.
 
-## Included Files
+## Files
 
-- `random_text_picker.py` — backend node implementations and preset API
+- `random_text_picker.py` — node implementations and preset API
 - `action_tag_semantic_cache.json.gz` — compressed CL Tagger lookup data
-- `web/lora_trigger_presets.js` — automatic LoRA preset loading and save button
-- `__init__.py` — ComfyUI node and web-extension registration
+- `web/lora_trigger_presets.js` — LoRA preset interface
+- `__init__.py` — node and web-extension registration
