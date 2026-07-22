@@ -7,7 +7,7 @@ A small ComfyUI node pack for prompt text, CL Tagger output, and LoRA trigger wo
 | Node | Category | Purpose |
 | --- | --- | --- |
 | Random Text Picker | `text/random` | Selects text from files by random seed, sequence, or index. |
-| Anime Prompt Formatter | `text/anime` | Normalizes anime tags, underscores, separators, and parentheses. |
+| Anima Prompt Formatter | `text/anima` | Normalizes Anima tags, underscores, separators, and parentheses. |
 | CL Tagger Action Filter | `text/tagger` | Extracts action tags and exact CL Tagger v2.00 character tags. |
 | LoRA Trigger Loader | `loaders/lora` | Loads a LoRA and outputs its saved trigger-word preset. |
 
