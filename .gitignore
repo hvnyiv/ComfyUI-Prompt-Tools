@@ -2,3 +2,6 @@ __pycache__/
 *.py[cod]
 .env
 .venv/
+*.bak
+lora_trigger_presets.json
+lora_trigger_presets.json.tmp
