@@ -26,8 +26,11 @@ Select a LoRA, enter its trigger words, then click **Save Trigger Preset**.
 Selecting that LoRA later restores the words automatically. Saving an empty
 preset deletes it.
 
-Personal presets are stored in `lora_trigger_presets.json` and are ignored by
-Git.
+Personal presets are stored outside the custom-node folder at
+`ComfyUI/user/__prompt_tools/lora_trigger_presets.json`, so updating or
+reinstalling the node does not overwrite them. Existing presets from the old
+custom-node location are copied there automatically the first time they are
+loaded or saved.
 
 ## CL Tagger Filter
 

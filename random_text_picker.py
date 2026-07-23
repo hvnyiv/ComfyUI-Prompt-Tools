@@ -47,25 +47,68 @@ ACTION_TAG_CACHE_FILE = os.path.join(
 )
 _ACTION_TAG_CACHE = None
 
-LORA_TRIGGER_PRESET_FILE = os.path.join(
+LORA_TRIGGER_PRESET_LEGACY_FILE = os.path.join(
     os.path.dirname(os.path.abspath(__file__)), "lora_trigger_presets.json"
 )
 _LORA_TRIGGER_PRESET_LOCK = threading.Lock()
 
 
+def _get_lora_trigger_preset_file():
+    if hasattr(folder_paths, "get_system_user_directory"):
+        data_directory = folder_paths.get_system_user_directory("prompt_tools")
+    else:
+        # Compatibility with older ComfyUI versions.
+        data_directory = os.path.join(
+            folder_paths.get_user_directory(), "prompt_tools"
+        )
+    return os.path.join(data_directory, "lora_trigger_presets.json")
+
+
+def _read_lora_trigger_presets(path):
+    if not os.path.isfile(path):
+        return {}
+    with open(path, "r", encoding="utf-8") as file:
+        payload = json.load(file)
+    if not isinstance(payload, dict):
+        raise ValueError("LoRA trigger preset file must contain a JSON object")
+    return {
+        str(name): str(trigger_words)
+        for name, trigger_words in payload.items()
+        if isinstance(name, str) and isinstance(trigger_words, str)
+    }
+
+
+def _write_lora_trigger_presets(path, payload):
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    temporary_path = path + ".tmp"
+    try:
+        with open(temporary_path, "w", encoding="utf-8", newline="\n") as file:
+            json.dump(payload, file, ensure_ascii=False, indent=2, sort_keys=True)
+            file.write("\n")
+        os.replace(temporary_path, path)
+    finally:
+        if os.path.isfile(temporary_path):
+            os.remove(temporary_path)
+
+
+def _prepare_lora_trigger_preset_file():
+    preset_file = _get_lora_trigger_preset_file()
+    if (
+        not os.path.isfile(preset_file)
+        and os.path.isfile(LORA_TRIGGER_PRESET_LEGACY_FILE)
+    ):
+        # Copy validated legacy data and leave the original as a backup.
+        legacy_payload = _read_lora_trigger_presets(
+            LORA_TRIGGER_PRESET_LEGACY_FILE
+        )
+        _write_lora_trigger_presets(preset_file, legacy_payload)
+    return preset_file
+
+
 def _load_lora_trigger_presets():
     with _LORA_TRIGGER_PRESET_LOCK:
-        if not os.path.isfile(LORA_TRIGGER_PRESET_FILE):
-            return {}
-        with open(LORA_TRIGGER_PRESET_FILE, "r", encoding="utf-8") as file:
-            payload = json.load(file)
-        if not isinstance(payload, dict):
-            raise ValueError("LoRA trigger preset file must contain a JSON object")
-        return {
-            str(name): str(trigger_words)
-            for name, trigger_words in payload.items()
-            if isinstance(name, str) and isinstance(trigger_words, str)
-        }
+        preset_file = _prepare_lora_trigger_preset_file()
+        return _read_lora_trigger_presets(preset_file)
 
 
 def _save_lora_trigger_preset(lora_name, trigger_words):
@@ -77,24 +120,15 @@ def _save_lora_trigger_preset(lora_name, trigger_words):
         raise ValueError("LoRA name or trigger preset is too long")
 
     with _LORA_TRIGGER_PRESET_LOCK:
-        if os.path.isfile(LORA_TRIGGER_PRESET_FILE):
-            with open(LORA_TRIGGER_PRESET_FILE, "r", encoding="utf-8") as file:
-                payload = json.load(file)
-            if not isinstance(payload, dict):
-                payload = {}
-        else:
-            payload = {}
+        preset_file = _prepare_lora_trigger_preset_file()
+        payload = _read_lora_trigger_presets(preset_file)
 
         if trigger_words:
             payload[lora_name] = trigger_words
         else:
             payload.pop(lora_name, None)
 
-        temporary_path = LORA_TRIGGER_PRESET_FILE + ".tmp"
-        with open(temporary_path, "w", encoding="utf-8", newline="\n") as file:
-            json.dump(payload, file, ensure_ascii=False, indent=2, sort_keys=True)
-            file.write("\n")
-        os.replace(temporary_path, LORA_TRIGGER_PRESET_FILE)
+        _write_lora_trigger_presets(preset_file, payload)
 
 
 @PromptServer.instance.routes.get("/custom-nude/lora-trigger-preset")
