@@ -8,6 +8,7 @@ A small ComfyUI node pack for prompt text, CL Tagger output, and LoRA trigger wo
 | --- | --- | --- |
 | Random Text Picker | `text/random` | Selects text from files by random seed, sequence, or index. |
 | Anima Prompt Formatter | `text/anima` | Normalizes Anima tags, underscores, separators, and parentheses. |
+| CL Tagger v2 | `text/tagger` | Runs CL Tagger v2 directly without depending on ComfyUI Mira. |
 | CL Tagger Action Filter | `text/tagger` | Extracts action tags and exact CL Tagger v2.00 character tags. |
 | LoRA Trigger Loader | `loaders/lora` | Loads a LoRA and outputs its saved trigger-word preset. |
 
@@ -32,9 +33,23 @@ reinstalling the node does not overwrite them. Existing presets from the old
 custom-node location are copied there automatically the first time they are
 loaded or saved.
 
-## CL Tagger Filter
+## CL Tagger v2
 
-Connect Mira `CL Tagger v2` text output to `CL Tagger Action Filter`.
+Put each complete model version under
+`ComfyUI/models/cl_tagger_v2/<version>`. A version directory must contain
+`model.onnx`, `model.onnx.data`, and `model_vocabulary.json`.
+
+The model selector includes the official `v2_00` and `v2_01a` releases. When
+the selected model is incomplete or absent, the node downloads the required
+files from `cella110n/cl_tagger_v2` on Hugging Face before inference. This is a
+gated model: accept its license on Hugging Face and authenticate with
+`hf auth login` or `HF_TOKEN` before the first automatic download.
+
+The `CL Tagger v2` node is included directly in this plugin and does not modify
+or depend on ComfyUI Mira. Its internal node ID remains compatible with the
+previous Mira integration, so existing workflows reconnect after restart.
+
+Connect `CL Tagger v2` text output to `CL Tagger Action Filter`.
 `balanced` is the recommended preset; `strict` keeps fewer tags and
 `all_candidates` is intended for testing.
 
